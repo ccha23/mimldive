@@ -1,8 +1,8 @@
 version: '3'
 
 services: 
-    mi-jupyter:
-        image: localhost:32000/mi-jupyter:v0.3
+    mimldive:
+        image: chungc/mimldive:v0.1
         build: 
             context: .
             dockerfile: Dockerfile

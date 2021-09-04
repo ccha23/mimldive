@@ -203,6 +203,8 @@ RUN apt-get update --yes && \
     apt-get install --yes --no-install-recommends \
     build-essential \
     curl \
+    less \
+    sshfs \
     pandoc \
     pdf2svg \
     # ----
