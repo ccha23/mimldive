@@ -1,0 +1,8 @@
+version: '3'
+
+services: 
+    mi-jupyter:
+        image: localhost:32000/mi-jupyter:v0.3
+        build: 
+            context: .
+            dockerfile: Dockerfile
