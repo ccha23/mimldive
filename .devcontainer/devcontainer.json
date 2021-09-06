@@ -48,6 +48,8 @@
 		}
 	},
 
+	"postAttachCommand": "gitpuller https://github.com/ccha23/cscit21 main cscit21",	
+
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "jovyan"
 }
