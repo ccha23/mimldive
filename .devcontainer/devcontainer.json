@@ -1,8 +1,8 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.185.0/containers/python-3
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.285.0/containers/python-3
 {
 	"name": "mi-jupyter",
-	"image": "chungc/mimldive:v0.1",
+	"image": "chungc/mimldive:v0.2",
 
 	// See https://faun.pub/understanding-docker-container-memory-limit-behavior-41add155236c
 	"runArgs": ["-m","4g"],

@@ -2,7 +2,7 @@ version: '3'
 
 services: 
     mimldive:
-        image: chungc/mimldive:v0.1
+        image: chungc/mimldive:v0.2
         build: 
             context: .
             dockerfile: Dockerfile

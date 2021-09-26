@@ -1,1 +1,1 @@
-FROM chungc/mimldive:v0.1
+FROM chungc/mimldive:v0.2
