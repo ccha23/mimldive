@@ -5,7 +5,16 @@
 # https://hub.docker.com/_/ubuntu/?tab=tags&name=focal
 ARG ROOT_CONTAINER=ubuntu:focal
 
-FROM $ROOT_CONTAINER
+FROM $ROOT_CONTAINER AS base
+ARG TARGETARCH
+
+FROM base AS base-amd64
+ENV TARGETARCHALIAS='x86_64'
+
+FROM base AS base-arm64
+ENV TARGETARCHALIAS='aarch64'
+
+FROM base-$TARGETARCH
 
 LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
 ARG NB_USER="jovyan"
@@ -256,7 +265,7 @@ RUN apt-get update --yes && \
 
 # Texlive
 COPY texlive-profile.txt /tmp/
-ENV PATH=/usr/local/texlive/bin/x86_64-linux:$PATH
+ENV PATH=/usr/local/texlive/bin/${TARGETARCHALIAS}-linux:$PATH
 RUN wget -O /tmp/install-tl-unx.tar.gz http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
     mkdir /tmp/install-tl && \
     tar -xzf /tmp/install-tl-unx.tar.gz -C /tmp/install-tl --strip-components=1 && \
@@ -295,8 +304,11 @@ RUN conda install --quiet --yes \
     'jupyter_contrib_nbextensions=0.5.*' \
     'nbgitpuller=0.10.*' \
     'python-lsp-server=1.2.*' \
-    'rise=5.7.*' \
     'xeus-python=0.12.*' \
+    && \
+    if [ "$TARGETARCH" = "amd64" ]; then \
+    conda install --quiet --yes 'rise=5.7.*'; \
+    fi \
     && \
     jupyter nbextension enable code_prettify/code_prettify --sys-prefix && \
     jupyter nbextension enable init_cell/main --sys-prefix && \
@@ -315,19 +327,32 @@ RUN conda install --quiet --yes \
     fix-permissions "/home/${NB_USER}"
 
 # Tensorflow and PyTorch
-RUN pip install --quiet --no-cache-dir \
-    'tensorflow-cpu==2.6.*' \
-    'tensorflow-datasets==4.4.*' \
-    'tensorflow-addons==0.13.*' \
-    'tensorboard==2.6.*' \
-    'tensorflowjs==3.8.*' && \
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+        pip install --quiet --no-cache-dir \
+        'tensorflow==2.6.*' \
+        'tensorflow-datasets==4.4.*' \
+        'tensorboard==2.6.*' \
+        'tensorflowjs==3.8.*' \
+        -f https://tf.kmtea.eu/whl/stable.html && \
+        pip install --quiet --no-cache-dir --force-reinstall \
+        'torch==1.9.*' \
+        'torchvision==0.10.*'; \
+    elif [ "$TARGETARCH" = "amd64" ]; then \
+        pip install --quiet --no-cache-dir \
+        'tensorflow-cpu==2.6.*' \
+        'tensorflow-datasets==4.4.*' \
+        'tensorflow-addons==0.13.*' \
+        'tensorboard==2.6.*' \
+        'tensorflowjs==3.8.*' && \
+        pip install --quiet --no-cache-dir --force-reinstall \
+        'torch==1.8.2+cpu' \
+        'torchvision==0.9.2+cpu' \
+        'torchaudio===0.8.2' \
+        -f 'https://download.pytorch.org/whl/lts/1.8/torch_lts.html'; \
+    fi && \
     pip install --quiet --no-cache-dir --force-reinstall \
-    'torch==1.8.2+cpu' \
-    'torchvision==0.9.2+cpu' \
-    'torchaudio===0.8.2' \
     'numpy==1.20.*' \
     'typing-extensions' \
-    -f 'https://download.pytorch.org/whl/lts/1.8/torch_lts.html' \
     && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
