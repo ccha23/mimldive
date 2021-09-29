@@ -186,16 +186,6 @@ RUN apt-get update --yes && \
 
 USER ${NB_UID}
 
-# Tensorflow
-RUN pip install --quiet --no-cache-dir \
-    'tensorflow' \
-    'tensorflow-datasets==4.4.*' \
-    'tensorboard==2.6.*' \
-    'tensorflowjs==3.8.*' \
-    -f https://tf.kmtea.eu/whl/stable.html && \
-    fix-permissions "${CONDA_DIR}" && \
-    fix-permissions "/home/${NB_USER}"
-
 # Install Python 3 packages
 RUN mamba install --quiet --yes \
     'altair' \
@@ -323,10 +313,18 @@ RUN conda install --quiet --yes \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
 
-# PyTorch
-RUN pip install --no-cache-dir \
-    'torch' \
-    'torchvision' \
+# Tensorflow and PyTorch
+RUN pip install --quiet --no-cache-dir \
+    'tensorflow==2.6.*' \
+    'tensorflow-datasets==4.4.*' \
+    'tensorboard==2.6.*' \
+    'tensorflowjs==3.8.*' \
+    -f https://tf.kmtea.eu/whl/stable.html && \
+    pip install --quiet --no-cache-dir --force-reinstall \
+    'torch==1.9.*' \
+    'torchvision==0.10.*' \
+    'numpy==1.20.*' \
+    'typing-extensions' \
     && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
