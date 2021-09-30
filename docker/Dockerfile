@@ -308,8 +308,7 @@ RUN conda install --quiet --yes \
     && \
     if [ "$TARGETARCH" = "amd64" ]; then \
     conda install --quiet --yes 'rise=5.7.*'; \
-    fi \
-    && \
+    fi && \
     jupyter nbextension enable code_prettify/code_prettify --sys-prefix && \
     jupyter nbextension enable init_cell/main --sys-prefix && \
     jupyter nbextension enable scratchpad/main --sys-prefix && \
@@ -321,7 +320,9 @@ RUN conda install --quiet --yes \
     'manim==0.7.*' \
     'itikz==0.1.*' \
     'jupyter-www-proxy' \
-    'mytutor' && \
+    'mytutor' \
+    'jdc' \
+    && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"

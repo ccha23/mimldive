@@ -309,7 +309,9 @@ RUN conda install --quiet --yes \
     'manim==0.7.*' \
     'itikz==0.1.*' \
     'jupyter-www-proxy' \
-    'mytutor' && \
+    'mytutor' \
+    'jdc' \
+    && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
